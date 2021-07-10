@@ -4,23 +4,33 @@ import logoImg from '../assets/images/logo.svg'
 import deleteImg from '../assets/images/delete.svg'
 import checkImg from '../assets/images/check.svg'
 import answerImg from '../assets/images/answer.svg'
+
 import { Button } from '../components/Button';
 import { Question } from '../components/Question';
 import { RoomCode } from '../components/RoomCode';
+
 import { useRoom } from '../hooks/useRoom';
 import { database } from '../services/firebase';
 
 import '../styles/room.scss'
+import { useAuth } from '../hooks/useAuth'
 
 type RoomParams = {
   id: string;
 }
 
 export function AdminRoom() {
+  const { user } = useAuth();
+  const userId = user?.id;
   const history = useHistory();
   const params = useParams<RoomParams>();
   const roomId = params.id;
   const { title, questions } = useRoom(roomId);
+
+  async function checkAdmin(userId: string | undefined) {
+    const authorId = (await database.ref(`rooms/${roomId}/authorId`).get()).val();
+    if (!(userId === authorId)) { history.push(`/rooms/${roomId}/`) };
+  }
 
   async function handleEndRoom() {
     database.ref(`rooms/${roomId}`).update({
@@ -55,6 +65,8 @@ export function AdminRoom() {
   function handleQuit() {
     history.push('');
   }
+
+  checkAdmin(userId);
 
   return (
     <div id="page-room">
@@ -113,6 +125,6 @@ export function AdminRoom() {
           })}
         </div>
       </main>
-    </div >
-  );
+    </div>
+  )
 }
