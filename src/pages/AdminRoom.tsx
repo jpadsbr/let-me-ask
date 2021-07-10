@@ -52,6 +52,10 @@ export function AdminRoom() {
     }
   }
 
+  function handleQuit() {
+    history.push('');
+  }
+
   return (
     <div id="page-room">
       <header>
@@ -61,6 +65,7 @@ export function AdminRoom() {
             <RoomCode code={roomId} />
             <Button isOutlined onClick={handleEndRoom}>Encerrar sala</Button>
             <Button isOutlined onClick={handleSwitchToVisitor}>Modo Visitante</Button>
+            <Button onClick={handleQuit}>Sair</Button>
           </div>
         </div>
       </header>
