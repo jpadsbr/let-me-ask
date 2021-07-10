@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 
 import logoImg from '../assets/images/logo.svg'
 import { Button } from '../components/Button';
@@ -17,10 +17,21 @@ type RoomParams = {
 
 export function Room() {
   const { user } = useAuth();
+  const userId = user?.id;
+  const history = useHistory();
   const params = useParams<RoomParams>();
   const [newQuestion, setNewQuestion] = useState('');
   const roomId = params.id;
   const { title, questions } = useRoom(roomId);
+
+  async function handleSwitchToAdmin(userId: string | undefined) {
+    const authorId = (await database.ref(`rooms/${roomId}/authorId`).get()).val();
+    if (userId === authorId) {
+      history.push(`/admin/rooms/${roomId}`)
+    } else {
+      window.alert('Você não é adminstrador dessa sala.')
+    }
+  }
 
   async function handleSendQuestion(event: FormEvent) {
     event.preventDefault();
@@ -63,7 +74,10 @@ export function Room() {
       <header>
         <div className="content">
           <img src={logoImg} alt="letmeask" />
-          <RoomCode code={roomId} />
+          <div>
+            <RoomCode code={roomId} />
+            <Button isOutlined onClick={() => handleSwitchToAdmin(userId)}>Modo Admin</Button>
+          </div>
         </div>
       </header>
 

@@ -7,7 +7,6 @@ import answerImg from '../assets/images/answer.svg'
 import { Button } from '../components/Button';
 import { Question } from '../components/Question';
 import { RoomCode } from '../components/RoomCode';
-//import { useAuth } from '../hooks/useAuth';
 import { useRoom } from '../hooks/useRoom';
 import { database } from '../services/firebase';
 
@@ -18,7 +17,6 @@ type RoomParams = {
 }
 
 export function AdminRoom() {
-  //const { user } = useAuth();
   const history = useHistory();
   const params = useParams<RoomParams>();
   const roomId = params.id;
@@ -30,6 +28,10 @@ export function AdminRoom() {
     })
 
     history.push('/');
+  }
+
+  async function handleSwitchToVisitor() {
+    history.push(`/rooms/${roomId}`);
   }
 
   async function handleCheckQuestionAsAnswered(questionId: string) {
@@ -58,6 +60,7 @@ export function AdminRoom() {
           <div>
             <RoomCode code={roomId} />
             <Button isOutlined onClick={handleEndRoom}>Encerrar sala</Button>
+            <Button isOutlined onClick={handleSwitchToVisitor}>Modo Visitante</Button>
           </div>
         </div>
       </header>
