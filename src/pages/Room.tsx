@@ -16,7 +16,7 @@ type RoomParams = {
 }
 
 export function Room() {
-  const { user } = useAuth();
+  const { user, signInWithGoogle } = useAuth();
   const userId = user?.id;
   const history = useHistory();
   const params = useParams<RoomParams>();
@@ -30,6 +30,12 @@ export function Room() {
       history.push(`/admin/rooms/${roomId}`)
     } else {
       window.alert('Você não é adminstrador dessa sala.')
+    }
+  }
+
+  async function handleSignIn() {
+    if (!user) {
+      await signInWithGoogle();
     }
   }
 
@@ -106,7 +112,7 @@ export function Room() {
                 <span>{user.name}</span>
               </div>
             ) : (
-              <span>Para enviar uma pergunta, <button>faça seu login</button></span>
+              <span>Para enviar uma pergunta, <button onClick={() => handleSignIn()}>faça seu login</button></span>
             )}
             <Button type="submit" disabled={!user}>Enviar Pergunta</Button>
           </div>
